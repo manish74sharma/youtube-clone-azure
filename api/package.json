@@ -1,0 +1,7 @@
+// File location: api/package.json
+
+{
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  }
+}
