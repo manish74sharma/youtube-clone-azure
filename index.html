@@ -5,13 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube Clone</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Clone</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -250,7 +243,7 @@
     </div>
 
 <script type="module">
-    // --- FIREBASE IMPORTS (UPDATED) ---
+    // --- FIREBASE IMPORTS ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -578,7 +571,6 @@
             subscribeButton.addEventListener('click', toggleSubscription);
         };
 
-        // MODIFIED: updateUIForAuthState is now role-aware for logged-in users
         const updateUIForAuthState = (user) => {
             if (user) {
                 signinButton.classList.add('hidden');
@@ -587,7 +579,6 @@
                 userAvatar.src = user.avatar;
                 userAvatar.onerror = () => { userAvatar.src = 'https://placehold.co/32x32/e0e0e0/000000?text=U'; };
                 
-                // Show 'Add Video' button only if the user's role is 'creator'
                 if (user.role === 'creator') {
                     addVideoButton.classList.remove('hidden');
                 } else {
@@ -742,7 +733,6 @@
                 const querySnapshot = await getDocs(collection(db, "videos"));
                 const uploadedVideos = [];
                 querySnapshot.forEach((doc) => {
-                    // Include creatorId when fetching
                     uploadedVideos.push({ id: doc.id, ...doc.data(), type: 'local' });
                 });
                 return uploadedVideos;
@@ -861,7 +851,6 @@
             renderSubscribedChannelsList();
         };
 
-        // NEW: Delete video function for creators
         const deleteVideo = async (videoId) => {
             if (!currentUser || currentUser.role !== 'creator') {
                 alert("You don't have permission to delete this video.");
@@ -869,14 +858,13 @@
             }
             try {
                 await deleteDoc(doc(db, "videos", videoId));
-                await fetchAllVideos(); // Refresh the grid after deletion
+                await fetchAllVideos();
             } catch (error) {
                 console.error("Error deleting video:", error);
                 alert("Failed to delete the video. Please try again.");
             }
         };
 
-        // --- ROLE MANAGEMENT ---
         const handleRoleSelection = (role) => {
             sessionStorage.setItem('userRole', role);
             closeModal(roleChoiceModal);
@@ -933,8 +921,7 @@
                 const user = userCredential.user;
                 const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
                 
-                // MODIFIED: Save the selected role during signup
-                const role = sessionStorage.getItem('userRole') || 'viewer'; // Default to viewer
+                const role = sessionStorage.getItem('userRole') || 'viewer';
                 const newUser = { name, email, avatar, subscriptions: [], role: role };
                 await setDoc(doc(db, "users", user.uid), newUser);
                 
@@ -951,8 +938,8 @@
 
         logoutButton.addEventListener('click', () => {
             signOut(auth);
-            sessionStorage.removeItem('userRole'); // Clear role on logout
-            window.location.reload(); // Reload to show role choice modal
+            sessionStorage.removeItem('userRole');
+            window.location.reload();
         });
 
         document.body.addEventListener('click', (e) => {
@@ -960,12 +947,12 @@
             const deleteButton = e.target.closest('.delete-video-button');
 
             if (deleteButton) {
-                e.stopPropagation(); // Prevent opening the video
+                e.stopPropagation();
                 const videoId = deleteButton.dataset.videoId;
                 if (confirm("Are you sure you want to permanently delete this video?")) {
                     deleteVideo(videoId);
                 }
-                return; // Stop further processing
+                return;
             }
 
             if (videoCard) {
@@ -1064,7 +1051,6 @@
                     uploadToCloudinary(thumbnailFile)
                 ]);
 
-                // MODIFIED: Add creatorId when saving the video
                 await addDoc(collection(db, "videos"), {
                     title,
                     videoUrl,
@@ -1073,7 +1059,7 @@
                     channelAvatar: currentUser.avatar,
                     views: '0',
                     uploaded: new Date().toISOString(),
-                    creatorId: currentUser.uid // Set the owner
+                    creatorId: currentUser.uid
                 });
 
                 closeModal(addVideoModal);
@@ -1150,7 +1136,6 @@
                 const userSnap = await getDoc(userRef);
                 if (userSnap.exists()) {
                     currentUser = { uid: user.uid, ...userSnap.data() };
-                    // Set session role from the definitive source (database)
                     sessionStorage.setItem('userRole', currentUser.role);
                 }
                 updateUIForAuthState(currentUser);
@@ -1174,133 +1159,12 @@
         if (!storedRole) {
             openModal(roleChoiceModal);
         } else {
-            fetchAllVideos();
+            fetchAllVideos(); // Corrected function name
         }
     }
 
     main();
 </script>
 
-</body>
-</html>
-    <style>
-        body { font-family: 'Inter', sans-serif; overflow: hidden; }
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #181818; }
-        ::-webkit-scrollbar-thumb { background: #4a4a4a; border-radius: 4px; }
-        .hidden { display: none; }
-        .modal-overlay { background-color: rgba(0, 0, 0, 0.75); }
-    </style>
-</head>
-<body class="bg-black text-white">
-
-    <div id="app-container" class="flex flex-col h-screen"></div>
-    
-<script type="module">
-    // --- FIREBASE IMPORTS ---
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    
-    // --- STATE MANAGEMENT ---
-    let allFetchedVideos = [];
-    let currentUserProfile = null;
-    let selectedRole = 'user';
-
-    // --- HELPER & RENDER FUNCTIONS (MOVED OUTSIDE OF MAIN) ---
-    const formatViews = (views) => { if (!views) return '0'; const num = parseInt(views, 10); if (num >= 1000000000) return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B'; if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'; if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K'; return num.toString(); };
-    const formatUploadDate = (dateString) => { if (!dateString) return 'a moment ago'; const now = new Date(); const then = new Date(dateString); const diff = now - then; const days = Math.floor(diff / (1000 * 60 * 60 * 24)); if (days > 365) return `${Math.floor(days / 365)} years ago`; if (days > 30) return `${Math.floor(days / 30)} months ago`; if (days > 0) return `${days} days ago`; return `today`; };
-    const formatDuration = (isoDuration) => { if (!isoDuration) return ''; const match = isoDuration.match(/PT(\d+H)?(\d+M)?(\d+S)?/); if (!match) return ''; const hours = (parseInt(match[1], 10) || 0); const minutes = (parseInt(match[2], 10) || 0); const seconds = (parseInt(match[3], 10) || 0); if (hours > 0) { return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`; } return `${minutes}:${String(seconds).padStart(2, '0')}`; };
-
-    const renderVideos = (videosToRender, container) => {
-        if (!container) return; // Guard clause
-        container.innerHTML = '';
-        if (!videosToRender || videosToRender.length === 0) {
-            container.innerHTML = '<p class="text-gray-400 col-span-full text-center">No videos found.</p>';
-            return;
-        }
-        videosToRender.forEach(video => {
-            const videoCard = document.createElement('div');
-            // ... (rest of renderVideos function is the same)
-        });
-    };
-
-    async function main() {
-        // --- FIREBASE CONFIG ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyBX0lcbvcsQ8Z1nq7QlrfBNv2F8FB7copQ",
-            authDomain: "clone-49ab4.firebaseapp.com",
-            projectId: "clone-49ab4",
-            storageBucket: "clone-49ab4.appspot.com",
-            messagingSenderId: "292424254446",
-            appId: "1:292424254446:web:8252efde138472e30404ff"
-        };
-        
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        // --- DOM SELECTORS ---
-        const videoGrid = document.getElementById('video-grid');
-        // ... all other selectors
-
-        // --- AUTHENTICATION & PROFILE FUNCTIONS ---
-        const createUserProfile = async (user, displayName) => {
-            const userDocRef = doc(db, "users", user.uid);
-            console.log("Attempting to create user profile in Firestore for UID:", user.uid);
-            try {
-                await setDoc(userDocRef, { 
-                    uid: user.uid, 
-                    email: user.email, 
-                    role: selectedRole, 
-                    displayName: displayName, 
-                    createdAt: new Date() 
-                });
-                console.log("Successfully created user profile.");
-            } catch (error) { 
-                console.error("CRITICAL: Failed to create user profile in Firestore:", error);
-                // Optionally, you could delete the auth user here to prevent orphaned accounts
-            }
-        };
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const openAuthFlowButton = document.getElementById('open-auth-flow-button');
-                const userMenu = document.getElementById('user-menu');
-                const uploadButton = document.getElementById('upload-button');
-
-                openAuthFlowButton.classList.add('hidden');
-                userMenu.classList.remove('hidden');
-                userMenu.classList.add('flex');
-                
-                const userDocRef = doc(db, "users", user.uid);
-                const userDocSnap = await getDoc(userDocRef);
-
-                if (userDocSnap.exists()) {
-                    currentUserProfile = userDocSnap.data();
-                    if (currentUserProfile.role === 'creator') { uploadButton.classList.remove('hidden'); }
-                    document.getElementById('user-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUserProfile.displayName)}&background=random`;
-                } else {
-                    console.warn("User is authenticated, but no profile document was found for UID:", user.uid);
-                }
-            } else {
-                // ... sign out logic ...
-            }
-            renderVideos(allFetchedVideos, videoGrid);
-        });
-
-        // ... All other functions and event listeners ...
-
-        await fetchAllVideos();
-    }
-
-    // --- ERROR HANDLING WRAPPER ---
-    try {
-        main();
-    } catch (error) {
-        console.error("A critical error occurred during initialization:", error);
-    }
-</script>
 </body>
 </html>
