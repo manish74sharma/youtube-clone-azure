@@ -66,12 +66,15 @@
     </div>
     
     <script type="module">
+    console.log("Checkpoint 1: Script tag is loading.");
+
     // --- FIREBASE IMPORTS ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    
-    async function main() {
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    try {
+        console.log("Checkpoint 2: Imports are successful. Now initializing Firebase.");
+
         // --- FIREBASE CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyBX0lcbvcsQ8Z1nq7QlrfBNv2F8FB7copQ",
@@ -81,83 +84,27 @@
             messagingSenderId: "292424254446",
             appId: "1:292424254446:web:8252efde138472e30404ff"
         };
-        
+
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        console.log("Checkpoint 3: Firebase app initialized successfully.");
+
         const auth = getAuth(app);
+        console.log("Checkpoint 4: Firebase Auth service obtained successfully.");
 
-        // --- DOM SELECTORS ---
-        const openAuthFlowButton = document.getElementById('open-auth-flow-button');
-        const userMenu = document.getElementById('user-menu');
-        const uploadButton = document.getElementById('upload-button');
-        // ... all other selectors are the same
-
-        // --- STATE MANAGEMENT ---
-        let allFetchedVideos = [];
-        let currentUserProfile = null;
-        let selectedRole = 'user';
-
-        // ... Other functions (helpers, API calls, etc.) are the same ...
-
-        // --- UPDATED AUTHENTICATION LISTENER WITH DEBUGGING ---
-        onAuthStateChanged(auth, async (user) => {
-            console.log("onAuthStateChanged triggered."); // Checkpoint 1: Did the function run?
-
+        onAuthStateChanged(auth, (user) => {
+            console.log("Checkpoint 5: The onAuthStateChanged listener has fired!");
             if (user) {
-                console.log("User is signed in:", user.uid, user.email); // Checkpoint 2: Is there a user object?
-
-                // UI updates that should happen immediately
-                console.log("Hiding 'Sign In' button and showing user menu.");
-                openAuthFlowButton.classList.add('hidden');
-                userMenu.classList.remove('hidden');
-                userMenu.classList.add('flex');
-                
-                console.log("Attempting to fetch user profile from Firestore...");
-                const userDocRef = doc(db, "users", user.uid);
-                try {
-                    const userDocSnap = await getDoc(userDocRef);
-                    if (userDocSnap.exists()) {
-                        console.log("User profile document found:", userDocSnap.data()); // Checkpoint 3: Did we find the profile?
-                        currentUserProfile = userDocSnap.data();
-                        if (currentUserProfile.role === 'creator') {
-                            uploadButton.classList.remove('hidden');
-                        }
-                        document.getElementById('user-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUserProfile.displayName)}&background=random`;
-                    } else {
-                        // This is a warning, not an error. The user is logged in but has no profile document.
-                        console.warn("User is authenticated, but no profile document was found in Firestore for UID:", user.uid);
-                    }
-                } catch (error) {
-                    // This is a critical error if Firestore fails.
-                    console.error("Error fetching user profile from Firestore:", error);
-                }
+                console.log("----> User is signed in:", user.email);
             } else {
-                console.log("User is signed out."); // Checkpoint 4: Did the user sign out?
-                currentUserProfile = null;
-                uploadButton.classList.add('hidden');
-                openAuthFlowButton.classList.remove('hidden');
-                userMenu.classList.add('hidden');
-                userMenu.classList.remove('flex');
+                console.log("----> User is signed out.");
             }
-            // Re-render videos to show/hide delete buttons based on login state
-            renderVideos(allFetchedVideos, document.getElementById('video-grid'));
         });
 
-        // ... All other functions and event listeners remain the same ...
-        // createUserProfile, renderVideos, fetchAllVideos, signinForm submit, etc.
-    }
+        console.log("Checkpoint 6: Script has finished setting up the listener without errors.");
 
-    // --- ERROR HANDLING WRAPPER (no changes) ---
-    try {
-        main();
     } catch (error) {
-        console.error("A critical error occurred during initialization:", error);
-        document.body.innerHTML = `<div style="color: red; font-family: sans-serif; padding: 2rem; background-color: #181818; height: 100vh;">
-            <h1>Application Error</h1>
-            <p>A critical error prevented the app from loading. Please check the developer console (F12) for more details.</p>
-            <p style="margin-top: 1rem; font-weight: bold;">Error Message: ${error.message}</p>
-        </div>`;
+        console.error("CRITICAL SETUP ERROR:", error);
     }
 </script>
 </body>
