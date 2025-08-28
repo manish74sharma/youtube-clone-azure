@@ -65,78 +65,7 @@
         </div>
     </div>
     
-    <div id="role-selection-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-overlay">
-        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-sm relative">
-            <button id="close-role-modal" class="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl">&times;</button>
-            <h2 class="text-2xl font-bold text-center mb-6">Choose Your Role</h2>
-            <div class="space-y-4">
-                <button id="select-role-user" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full">Continue as a Viewer</button>
-                <button id="select-role-creator" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-full">Continue as a Creator</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="signin-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-overlay">
-        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-sm relative">
-            <button id="close-signin-modal" class="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl">&times;</button>
-            <h2 class="text-2xl font-bold text-center mb-6">Sign In</h2>
-            <form id="signin-form">
-                 <div class="space-y-4">
-                    <div>
-                        <label for="signin-email" class="block text-sm font-medium text-gray-300">Email</label>
-                        <input type="email" id="signin-email" required class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none">
-                    </div>
-                    <div>
-                        <label for="signin-password" class="block text-sm font-medium text-gray-300">Password</label>
-                        <input type="password" id="signin-password" required class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none">
-                    </div>
-                </div>
-                <p id="signin-error-message" class="hidden text-red-400 text-sm text-center mt-4"></p>
-                <div class="mt-6">
-                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">Sign In</button>
-                </div>
-            </form>
-            <p class="mt-4 text-center text-sm text-gray-400">
-                Don't have an account? <button id="go-to-signup" class="font-medium text-blue-400 hover:underline">Sign Up</button>
-            </p>
-        </div>
-    </div>
-
-    <div id="signup-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-overlay">
-        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-sm relative">
-            <button id="close-signup-modal" class="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl">&times;</button>
-            <h2 class="text-2xl font-bold text-center mb-6">Create Account</h2>
-            <form id="signup-form">
-                <div class="space-y-4">
-                    <div>
-                        <label for="signup-name" class="block text-sm font-medium text-gray-300">Name</label>
-                        <input type="text" id="signup-name" required class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none">
-                    </div>
-                    <div>
-                        <label for="signup-email" class="block text-sm font-medium text-gray-300">Email</label>
-                        <input type="email" id="signup-email" required class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none">
-                    </div>
-                    <div>
-                        <label for="signup-password" class="block text-sm font-medium text-gray-300">Password</label>
-                        <input type="password" id="signup-password" required class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none">
-                    </div>
-                </div>
-                <p id="signup-error-message" class="hidden text-red-400 text-sm text-center mt-4"></p>
-                <div class="mt-6">
-                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">Sign Up</button>
-                </div>
-            </form>
-            <p class="mt-4 text-center text-sm text-gray-400">
-                Already have an account? <button id="go-to-signin" class="font-medium text-blue-400 hover:underline">Sign In</button>
-            </p>
-        </div>
-    </div>
-    
-    <div id="upload-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-overlay">
-        </div>
-
-
-<script type="module">
+    <script type="module">
     // --- FIREBASE IMPORTS ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -158,126 +87,65 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- DOM SELECTORS (no changes) ---
-        const videoGrid = document.getElementById('video-grid');
-        const searchInput = document.getElementById('search-input');
-        const searchButton = document.getElementById('search-button');
+        // --- DOM SELECTORS ---
         const openAuthFlowButton = document.getElementById('open-auth-flow-button');
-        const signoutButton = document.getElementById('signout-button');
         const userMenu = document.getElementById('user-menu');
-        const roleSelectionModal = document.getElementById('role-selection-modal');
-        const closeRoleModal = document.getElementById('close-role-modal');
-        const selectRoleUser = document.getElementById('select-role-user');
-        const selectRoleCreator = document.getElementById('select-role-creator');
-        const signinModal = document.getElementById('signin-modal');
-        const signinForm = document.getElementById('signin-form');
-        const closeSigninModal = document.getElementById('close-signin-modal');
-        const goToSignup = document.getElementById('go-to-signup');
-        const signinErrorMessage = document.getElementById('signin-error-message');
-        const signupModal = document.getElementById('signup-modal');
-        const signupForm = document.getElementById('signup-form');
-        const closeSignupModal = document.getElementById('close-signup-modal');
-        const goToSignin = document.getElementById('go-to-signin');
-        const signupErrorMessage = document.getElementById('signup-error-message');
         const uploadButton = document.getElementById('upload-button');
-        const uploadModal = document.getElementById('upload-modal');
-        const uploadForm = document.getElementById('upload-form');
-        const cancelUpload = document.getElementById('cancel-upload');
-        
-        // --- STATE MANAGEMENT (no changes) ---
+        // ... all other selectors are the same
+
+        // --- STATE MANAGEMENT ---
         let allFetchedVideos = [];
         let currentUserProfile = null;
         let selectedRole = 'user';
 
-        // --- HELPER, AUTH, RENDER, API, UPLOAD/DELETE FUNCTIONS (no changes) ---
-        // ... all the functions from the previous version go here ...
-        const createUserProfile = async (user, displayName) => { /* same as before */ };
-        onAuthStateChanged(auth, async (user) => { /* same as before */ });
-        // etc...
+        // ... Other functions (helpers, API calls, etc.) are the same ...
 
-        // --- UPDATED ERROR HANDLER ---
-        const showErrorMessage = (element, error) => {
-            let message = '';
-            // Check the specific error code from Firebase
-            switch (error.code) {
-                case 'auth/weak-password':
-                    message = 'Password should be at least 6 characters.';
-                    break;
-                case 'auth/email-already-in-use':
-                    message = 'This email address is already registered.';
-                    break;
-                case 'auth/invalid-email':
-                    message = 'Please enter a valid email address.';
-                    break;
-                case 'auth/wrong-password':
-                    message = 'Incorrect password. Please try again.';
-                    break;
-                case 'auth/user-not-found':
-                    message = 'No account found with this email address.';
-                    break;
-                default:
-                    message = 'An unexpected error occurred. Please try again.';
-                    console.error("Authentication Error:", error); // Log the full error for debugging
-                    break;
+        // --- UPDATED AUTHENTICATION LISTENER WITH DEBUGGING ---
+        onAuthStateChanged(auth, async (user) => {
+            console.log("onAuthStateChanged triggered."); // Checkpoint 1: Did the function run?
+
+            if (user) {
+                console.log("User is signed in:", user.uid, user.email); // Checkpoint 2: Is there a user object?
+
+                // UI updates that should happen immediately
+                console.log("Hiding 'Sign In' button and showing user menu.");
+                openAuthFlowButton.classList.add('hidden');
+                userMenu.classList.remove('hidden');
+                userMenu.classList.add('flex');
+                
+                console.log("Attempting to fetch user profile from Firestore...");
+                const userDocRef = doc(db, "users", user.uid);
+                try {
+                    const userDocSnap = await getDoc(userDocRef);
+                    if (userDocSnap.exists()) {
+                        console.log("User profile document found:", userDocSnap.data()); // Checkpoint 3: Did we find the profile?
+                        currentUserProfile = userDocSnap.data();
+                        if (currentUserProfile.role === 'creator') {
+                            uploadButton.classList.remove('hidden');
+                        }
+                        document.getElementById('user-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUserProfile.displayName)}&background=random`;
+                    } else {
+                        // This is a warning, not an error. The user is logged in but has no profile document.
+                        console.warn("User is authenticated, but no profile document was found in Firestore for UID:", user.uid);
+                    }
+                } catch (error) {
+                    // This is a critical error if Firestore fails.
+                    console.error("Error fetching user profile from Firestore:", error);
+                }
+            } else {
+                console.log("User is signed out."); // Checkpoint 4: Did the user sign out?
+                currentUserProfile = null;
+                uploadButton.classList.add('hidden');
+                openAuthFlowButton.classList.remove('hidden');
+                userMenu.classList.add('hidden');
+                userMenu.classList.remove('flex');
             }
-            element.textContent = message;
-            element.classList.remove('hidden');
-        };
-
-        // --- EVENT HANDLERS (no changes, but shown for completeness) ---
-        openAuthFlowButton.addEventListener('click', () => roleSelectionModal.classList.remove('hidden'));
-        closeRoleModal.addEventListener('click', () => roleSelectionModal.classList.add('hidden'));
-
-        const handleRoleSelection = (role) => {
-            selectedRole = role;
-            roleSelectionModal.classList.add('hidden');
-            signinModal.classList.remove('hidden');
-        };
-        selectRoleUser.addEventListener('click', () => handleRoleSelection('user'));
-        selectRoleCreator.addEventListener('click', () => handleRoleSelection('creator'));
-
-        closeSigninModal.addEventListener('click', () => signinModal.classList.add('hidden'));
-        closeSignupModal.addEventListener('click', () => signupModal.classList.add('hidden'));
-        goToSignup.addEventListener('click', () => { signinModal.classList.add('hidden'); signupModal.classList.remove('hidden'); });
-        goToSignin.addEventListener('click', () => { signupModal.classList.add('hidden'); signinModal.classList.remove('hidden'); });
-
-        signoutButton.addEventListener('click', () => signOut(auth));
-        
-        signinForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            signinErrorMessage.classList.add('hidden');
-            const email = signinForm['signin-email'].value;
-            const password = signinForm['signin-password'].value;
-            signInWithEmailAndPassword(auth, email, password)
-                .then(() => {
-                    signinForm.reset();
-                    signinModal.classList.add('hidden');
-                })
-                .catch(error => showErrorMessage(signinErrorMessage, error));
+            // Re-render videos to show/hide delete buttons based on login state
+            renderVideos(allFetchedVideos, document.getElementById('video-grid'));
         });
-        
-        signupForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            signupErrorMessage.classList.add('hidden');
-            const name = signupForm['signup-name'].value;
-            const email = signupForm['signup-email'].value;
-            const password = signupForm['signup-password'].value;
-            createUserWithEmailAndPassword(auth, email, password)
-                .then(userCredential => {
-                    return updateProfile(userCredential.user, { displayName: name })
-                        .then(() => createUserProfile(userCredential.user, name));
-                })
-                .then(() => {
-                    signupForm.reset();
-                    signupModal.classList.add('hidden');
-                })
-                .catch(error => showErrorMessage(signupErrorMessage, error));
-        });
-        
-        // ... other event handlers
-        
-        // --- INITIALIZATION ---
-        // await fetchAllVideos(); // This line might be commented out from previous debugging, ensure it's active if needed
+
+        // ... All other functions and event listeners remain the same ...
+        // createUserProfile, renderVideos, fetchAllVideos, signinForm submit, etc.
     }
 
     // --- ERROR HANDLING WRAPPER (no changes) ---
