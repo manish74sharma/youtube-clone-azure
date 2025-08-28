@@ -274,7 +274,18 @@
     const CLOUDINARY_CLOUD_NAME = 'dx3ovohb4';
     const CLOUDINARY_UPLOAD_PRESET = 'youtubeClone';
     
-    const API_BASE_URL = 'https://orange-sea-0bdd47003.2.azurestaticapps.net'; 
+    // const API_BASE_URL = 'https://orange-sea-0bdd47003.2.azurestaticapps.net'; 
+
+    // --- MOCK API DATA (to fix the "Failed to fetch" error) ---
+    // In a real application, you would have a backend service to fetch this data.
+    const mockYoutubeData = {
+        items: [
+            { id: 'dQw4w9WgXcQ', snippet: { title: "Rick Astley - Never Gonna Give You Up", thumbnails: { high: { url: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg" } }, channelTitle: "Rick Astley", channelId: "UCuAXFkgsw1L7xaCfnd5JJOw", publishedAt: "2009-10-25T06:57:33Z" }, statistics: { viewCount: "1500000000" }, contentDetails: { duration: "PT3M32S" } },
+            { id: '3tmd-ClpJxA', snippet: { title: "Coding in Chicago", thumbnails: { high: { url: "https://i.ytimg.com/vi/3tmd-ClpJxA/hqdefault.jpg" } }, channelTitle: "Google", channelId: "UC_x5XG1OV2P6uZZ5FSM9Ttw", publishedAt: "2023-05-10T14:00:00Z" }, statistics: { viewCount: "8500000" }, contentDetails: { duration: "PT4M15S" } },
+            { id: 'V-sEwsca1ZA', snippet: { title: "Lo-fi hip hop radio - beats to relax/study to", thumbnails: { high: { url: "https://i.ytimg.com/vi/V-sEwsca1ZA/hqdefault.jpg" } }, channelTitle: "Lofi Girl", channelId: "UCSJ4gkVC6NrvII8umztf0Ow", publishedAt: "2022-02-01T10:00:00Z" }, statistics: { viewCount: "500000000" }, contentDetails: { duration: "PT2H00M00S" } },
+            { id: 'M7lc1qf-27I', snippet: { title: "Node.js and Express.js - Full Course", thumbnails: { high: { url: "https://i.ytimg.com/vi/M7lc1qf-27I/hqdefault.jpg" } }, channelTitle: "freeCodeCamp.org", channelId: "UC8butISFwT-Wl7EV0hUK0BQ", publishedAt: "2021-06-20T16:00:00Z" }, statistics: { viewCount: "12000000" }, contentDetails: { duration: "PT9H30M00S" } },
+        ]
+    };
 
     async function main() {
         // --- DOM SELECTORS ---
@@ -699,28 +710,33 @@
         
         const fetchAndProcessVideos = async (params, isSearch = false) => {
             try {
-                const queryString = new URLSearchParams(params).toString();
-                const apiUrl = `${API_BASE_URL}/api/youtube?${queryString}`;
-                const response = await fetch(apiUrl);
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText || `API error! status: ${response.status}`);
-                }
-                const data = await response.json();
-
-                let videoItems = data.items;
+                // --- MOCK IMPLEMENTATION TO FIX FETCH ERROR ---
+                // This section simulates a successful API call because the backend at
+                // API_BASE_URL is not available. Replace this with the original fetch
+                // logic once your backend is correctly deployed and configured.
+                console.log("Using mock data because API endpoint is not available. Params:", params);
                 
-                if (isSearch && data.items && data.items.length > 0) {
-                    const videoIds = data.items.map(item => item.id.videoId).filter(id => id).join(',');
-                    if (!videoIds) return [];
-                    
-                    const detailsApiUrl = `${API_BASE_URL}/api/youtube?videoIds=${videoIds}`;
-                    const detailsResponse = await fetch(detailsApiUrl);
-                    const detailsData = await detailsResponse.json();
-                    videoItems = detailsData.items || [];
+                let videoItems = mockYoutubeData.items;
+
+                // Simulate search by filtering mock data
+                if (params.q) {
+                    const query = params.q.toLowerCase();
+                    if (query === '#shorts') {
+                         videoItems = mockYoutubeData.items.slice(0, 2); // Return first 2 for shorts
+                    } else {
+                        videoItems = mockYoutubeData.items.filter(item =>
+                            item.snippet.title.toLowerCase().includes(query) ||
+                            item.snippet.channelTitle.toLowerCase().includes(query)
+                        );
+                    }
+                }
+                
+                // Simulate fetching by channel ID
+                if (params.channelId) {
+                     videoItems = mockYoutubeData.items.filter(item => item.snippet.channelId === params.channelId);
                 }
 
+                // The rest of the processing logic remains the same
                 return videoItems.map(item => ({
                     id: item.id.videoId || item.id,
                     type: 'youtube',
@@ -733,6 +749,7 @@
                     duration: formatDuration(item.contentDetails?.duration),
                     channelAvatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(item.snippet.channelTitle)}&background=random`
                 }));
+
             } catch (error) {
                 console.error('API Error:', error);
                 videoGrid.innerHTML = `<p class="text-red-500 text-center col-span-full">Error: Could not load video data. The API endpoint may be configured incorrectly.</p>`;
@@ -757,7 +774,7 @@
                     errorDiv.innerHTML = `
                         <h3 class="text-lg font-bold text-red-400 mb-2">Firestore Connection Error</h3>
                         <p class="text-gray-300">Could not connect to the database. This could be due to incorrect Firebase config or security rules.</p>
-                        <p class="text-gray-400 text-sm mt-1">Please ensure your Firebase configuration is set correctly in the Azure Portal.</p>
+                        <p class="text-gray-400 text-sm mt-1">Please ensure your Firebase configuration is set correctly.</p>
                     `;
                     videoGrid.prepend(errorDiv);
                 }
@@ -766,6 +783,7 @@
         };
         
         const fetchPopularVideos = async () => {
+            // Now uses the mock data function
             return await fetchAndProcessVideos({ chart: 'mostPopular' });
         };
 
@@ -801,19 +819,22 @@
                 return;
             }
             try {
-                const apiUrl = `${API_BASE_URL}/api/youtube?q=${encodeURIComponent(query)}&type=channel`;
-                const response = await fetch(apiUrl);
-                const data = await response.json();
+                // Using mock data for suggestions as well
+                const suggestions = mockYoutubeData.items
+                    .map(item => item.snippet.channelTitle)
+                    .filter((value, index, self) => self.indexOf(value) === index) // Unique channels
+                    .filter(channel => channel.toLowerCase().includes(query.toLowerCase()));
+
                 searchSuggestions.innerHTML = '';
                 activeSuggestionIndex = -1;
-                if (data.items) {
-                    data.items.forEach((item, index) => {
+                if (suggestions.length > 0) {
+                    suggestions.forEach((channelTitle, index) => {
                         const suggestion = document.createElement('div');
                         suggestion.className = 'p-2 hover:bg-gray-700 cursor-pointer';
-                        suggestion.textContent = item.snippet.channelTitle;
+                        suggestion.textContent = channelTitle;
                         suggestion.addEventListener('click', () => {
-                            searchInput.value = item.snippet.channelTitle;
-                            search(item.snippet.channelTitle);
+                            searchInput.value = channelTitle;
+                            search(channelTitle);
                             searchSuggestions.classList.add('hidden');
                         });
                          suggestion.addEventListener('mouseenter', () => {
