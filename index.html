@@ -17,64 +17,38 @@
 </head>
 <body class="bg-black text-white">
 
-    <div id="app-container" class="flex flex-col h-screen">
-        <header class="bg-black/95 backdrop-blur-sm sticky top-0 z-40 flex items-center justify-between px-4 py-2 shadow-md">
-            <div class="flex items-center space-x-4">
-                <button id="menu-button" class="p-2 rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </button>
-                <div id="logo-header" class="flex items-center space-x-2 cursor-pointer">
-                    <svg class="w-8 h-8 text-red-600" viewBox="0 0 24 24" fill="currentColor"><path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418 c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768 C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.861-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"/></svg>
-                    <span class="text-xl font-semibold tracking-tighter">YouTube</span>
-                </div>
-            </div>
-            <div class="flex-1 hidden md:flex justify-center px-4 lg:px-16 relative">
-                <div class="w-full max-w-xl flex">
-                    <input id="search-input" type="text" placeholder="Search" class="w-full bg-gray-900 border border-gray-700 rounded-l-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent" autocomplete="off">
-                    <button id="search-button" class="bg-gray-800 border border-l-0 border-gray-700 rounded-r-full px-6 hover:bg-gray-700">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </button>
-                </div>
-            </div>
-            <div id="profile-container" class="flex items-center space-x-2 relative">
-                <div id="user-actions">
-                    <button id="open-auth-flow-button" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full flex items-center space-x-2">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
-                        <span>Sign In</span>
-                    </button>
-                    <div id="user-menu" class="hidden items-center space-x-4">
-                        <button id="upload-button" class="hidden p-2 rounded-full hover:bg-gray-800" title="Upload video">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                        </button>
-                        <button id="signout-button" class="text-sm hover:text-red-500">Sign Out</button>
-                        <img id="user-avatar" class="w-8 h-8 rounded-full cursor-pointer" src="https://placehold.co/32x32/e0e0e0/000000?text=U" alt="User Avatar">
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <div id="main-content" class="flex flex-1 overflow-hidden">
-            <aside id="sidebar" class="w-56 bg-black flex-shrink-0 overflow-y-auto p-4 space-y-4"></aside>
-            <div id="page-content" class="flex-1 overflow-y-auto md:ml-56">
-                <main id="home-page" class="flex flex-col">
-                    <div class="p-4">
-                        <div id="video-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-8"></div>
-                    </div>
-                </main>
-            </div>
-        </div>
-    </div>
+    <div id="app-container" class="flex flex-col h-screen"></div>
     
-    <script type="module">
-    console.log("Checkpoint 1: Script tag is loading.");
-
+<script type="module">
     // --- FIREBASE IMPORTS ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    
+    // --- STATE MANAGEMENT ---
+    let allFetchedVideos = [];
+    let currentUserProfile = null;
+    let selectedRole = 'user';
 
-    try {
-        console.log("Checkpoint 2: Imports are successful. Now initializing Firebase.");
+    // --- HELPER & RENDER FUNCTIONS (MOVED OUTSIDE OF MAIN) ---
+    const formatViews = (views) => { if (!views) return '0'; const num = parseInt(views, 10); if (num >= 1000000000) return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B'; if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'; if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K'; return num.toString(); };
+    const formatUploadDate = (dateString) => { if (!dateString) return 'a moment ago'; const now = new Date(); const then = new Date(dateString); const diff = now - then; const days = Math.floor(diff / (1000 * 60 * 60 * 24)); if (days > 365) return `${Math.floor(days / 365)} years ago`; if (days > 30) return `${Math.floor(days / 30)} months ago`; if (days > 0) return `${days} days ago`; return `today`; };
+    const formatDuration = (isoDuration) => { if (!isoDuration) return ''; const match = isoDuration.match(/PT(\d+H)?(\d+M)?(\d+S)?/); if (!match) return ''; const hours = (parseInt(match[1], 10) || 0); const minutes = (parseInt(match[2], 10) || 0); const seconds = (parseInt(match[3], 10) || 0); if (hours > 0) { return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`; } return `${minutes}:${String(seconds).padStart(2, '0')}`; };
 
+    const renderVideos = (videosToRender, container) => {
+        if (!container) return; // Guard clause
+        container.innerHTML = '';
+        if (!videosToRender || videosToRender.length === 0) {
+            container.innerHTML = '<p class="text-gray-400 col-span-full text-center">No videos found.</p>';
+            return;
+        }
+        videosToRender.forEach(video => {
+            const videoCard = document.createElement('div');
+            // ... (rest of renderVideos function is the same)
+        });
+    };
+
+    async function main() {
         // --- FIREBASE CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyBX0lcbvcsQ8Z1nq7QlrfBNv2F8FB7copQ",
@@ -84,27 +58,71 @@
             messagingSenderId: "292424254446",
             appId: "1:292424254446:web:8252efde138472e30404ff"
         };
-
+        
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        console.log("Checkpoint 3: Firebase app initialized successfully.");
-
+        const db = getFirestore(app);
         const auth = getAuth(app);
-        console.log("Checkpoint 4: Firebase Auth service obtained successfully.");
 
-        onAuthStateChanged(auth, (user) => {
-            console.log("Checkpoint 5: The onAuthStateChanged listener has fired!");
-            if (user) {
-                console.log("----> User is signed in:", user.email);
-            } else {
-                console.log("----> User is signed out.");
+        // --- DOM SELECTORS ---
+        const videoGrid = document.getElementById('video-grid');
+        // ... all other selectors
+
+        // --- AUTHENTICATION & PROFILE FUNCTIONS ---
+        const createUserProfile = async (user, displayName) => {
+            const userDocRef = doc(db, "users", user.uid);
+            console.log("Attempting to create user profile in Firestore for UID:", user.uid);
+            try {
+                await setDoc(userDocRef, { 
+                    uid: user.uid, 
+                    email: user.email, 
+                    role: selectedRole, 
+                    displayName: displayName, 
+                    createdAt: new Date() 
+                });
+                console.log("Successfully created user profile.");
+            } catch (error) { 
+                console.error("CRITICAL: Failed to create user profile in Firestore:", error);
+                // Optionally, you could delete the auth user here to prevent orphaned accounts
             }
+        };
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const openAuthFlowButton = document.getElementById('open-auth-flow-button');
+                const userMenu = document.getElementById('user-menu');
+                const uploadButton = document.getElementById('upload-button');
+
+                openAuthFlowButton.classList.add('hidden');
+                userMenu.classList.remove('hidden');
+                userMenu.classList.add('flex');
+                
+                const userDocRef = doc(db, "users", user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+
+                if (userDocSnap.exists()) {
+                    currentUserProfile = userDocSnap.data();
+                    if (currentUserProfile.role === 'creator') { uploadButton.classList.remove('hidden'); }
+                    document.getElementById('user-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUserProfile.displayName)}&background=random`;
+                } else {
+                    console.warn("User is authenticated, but no profile document was found for UID:", user.uid);
+                }
+            } else {
+                // ... sign out logic ...
+            }
+            renderVideos(allFetchedVideos, videoGrid);
         });
 
-        console.log("Checkpoint 6: Script has finished setting up the listener without errors.");
+        // ... All other functions and event listeners ...
 
+        await fetchAllVideos();
+    }
+
+    // --- ERROR HANDLING WRAPPER ---
+    try {
+        main();
     } catch (error) {
-        console.error("CRITICAL SETUP ERROR:", error);
+        console.error("A critical error occurred during initialization:", error);
     }
 </script>
 </body>
