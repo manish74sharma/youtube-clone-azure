@@ -9,143 +9,87 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            /* Allow body to scroll on mobile, but hide main content scrollbars */
             overflow-x: hidden;
         }
-        /* Custom scrollbar for webkit browsers */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #181818;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #4a4a4a;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-        .hidden {
-            display: none;
-        }
-        /* Shorts specific styles */
-        .shorts-container {
-            scroll-snap-type: y mandatory;
-            overflow-y: scroll;
-            height: calc(100vh - 56px); /* Full height minus mobile header */
-        }
-        .short-video {
-            scroll-snap-align: start;
-            height: calc(100vh - 56px);
-        }
-        .suggestion-active {
-            background-color: #374151; /* gray-700 */
-        }
-        .categories::-webkit-scrollbar {
-            height: 4px;
-        }
-        .spinner {
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            width: 16px;
-            height: 16px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* RESPONSIVE: Sidebar styles for mobile drawer */
-        #sidebar {
-            transition: transform 300ms ease-in-out;
-        }
-        #sidebar.is-open {
-            transform: translateX(0);
-        }
-        @media (max-width: 767px) {
-            #sidebar {
-                transform: translateX(-100%);
-            }
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #181818; }
+        ::-webkit-scrollbar-thumb { background: #4a4a4a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+        .hidden { display: none; }
+        .shorts-container { scroll-snap-type: y mandatory; overflow-y: scroll; height: calc(100vh - 56px); }
+        .short-video { scroll-snap-align: start; height: calc(100vh - 56px); }
+        .suggestion-active { background-color: #374151; }
+        .categories::-webkit-scrollbar { height: 4px; }
+        .spinner { border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: #fff; width: 16px; height: 16px; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #sidebar { transition: transform 300ms ease-in-out; }
+        #sidebar.is-open { transform: translateX(0); }
+        @media (max-width: 767px) { #sidebar { transform: translateX(-100%); } }
     </style>
 </head>
 <body class="bg-black text-white">
 
-    <!-- Main Container -->
     <div id="app-container" class="flex flex-col h-screen">
 
-        <!-- Header -->
         <header class="bg-black/95 backdrop-blur-sm sticky top-0 z-40 flex items-center justify-between px-4 py-2 shadow-md">
-            <!-- Left Section: Logo & Menu -->
             <div class="flex items-center space-x-2 md:space-x-4">
                  <button id="menu-button" class="p-2 rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500">
                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </button>
-                <div id="logo-header" class="flex items-center space-x-2 cursor-pointer">
-                    <svg class="w-8 h-8 text-red-600" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418 c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768 C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.861-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"/>
-                    </svg>
-                    <span class="text-xl font-semibold tracking-tighter">YouTube</span>
-                </div>
+                 </button>
+                 <div id="logo-header" class="flex items-center space-x-2 cursor-pointer">
+                     <svg class="w-8 h-8 text-red-600" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                         <path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418 c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768 C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.861-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"/>
+                     </svg>
+                     <span class="text-xl font-semibold tracking-tighter">YouTube</span>
+                 </div>
             </div>
 
-            <!-- Center Section: Search Bar -->
-            <!-- RESPONSIVE: Hidden on small screens, flex on medium and up -->
             <div class="flex-1 hidden md:flex justify-center px-4 lg:px-16 relative">
-                <div class="w-full max-w-xl flex flex-col">
-                    <div class="w-full flex">
-                        <input id="search-input" type="text" placeholder="Search" class="w-full bg-gray-900 border border-gray-700 rounded-l-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent" autocomplete="off">
-                        <button id="search-button" class="bg-gray-800 border border-l-0 border-gray-700 rounded-r-full px-6 hover:bg-gray-700">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </button>
-                    </div>
-                    <div id="search-suggestions" class="absolute top-full mt-2 w-full max-w-xl bg-gray-800 border border-gray-700 rounded-lg shadow-lg hidden z-50">
-                        <!-- Search suggestions will be inserted here -->
-                    </div>
-                </div>
+                 <div class="w-full max-w-xl flex flex-col">
+                     <div class="w-full flex">
+                         <input id="search-input" type="text" placeholder="Search" class="w-full bg-gray-900 border border-gray-700 rounded-l-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent" autocomplete="off">
+                         <button id="search-button" class="bg-gray-800 border border-l-0 border-gray-700 rounded-r-full px-6 hover:bg-gray-700">
+                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                         </button>
+                     </div>
+                     <div id="search-suggestions" class="absolute top-full mt-2 w-full max-w-xl bg-gray-800 border border-gray-700 rounded-lg shadow-lg hidden z-50"></div>
+                 </div>
             </div>
 
-            <!-- Right Section: User Actions -->
             <div id="profile-container" class="flex items-center space-x-2 relative">
-                 <!-- RESPONSIVE: Search icon shown only on small screens -->
                  <button id="mobile-search-button" class="p-2 rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 md:hidden">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </button>
-                <button id="add-video-button" class="hidden md:block p-2 rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2-2v8a2 2 0 002 2z"></path></svg>
-                </button>
-                <div id="user-actions">
-                    <button id="signin-button" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full flex items-center space-x-2">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
-                        <span class="hidden sm:inline">Sign In</span>
-                    </button>
-                    <div id="user-menu" class="hidden items-center space-x-2">
-                        <img id="user-avatar" class="w-8 h-8 rounded-full cursor-pointer" src="https://placehold.co/32x32/e0e0e0/000000?text=U" alt="User Avatar">
-                    </div>
-                </div>
-                <!-- Profile Dropdown -->
-                <div id="profile-dropdown" class="hidden absolute top-full right-0 mt-2 w-64 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
-                    <div class="p-4 border-b border-gray-700 flex items-center space-x-3">
-                        <img id="profile-dropdown-avatar" class="w-10 h-10 rounded-full" src="https://placehold.co/40x40/e0e0e0/000000?text=U" alt="User Avatar">
-                        <div>
-                            <p id="profile-dropdown-name" class="font-semibold text-white"></p>
-                            <p id="profile-dropdown-email" class="text-sm text-gray-400"></p>
-                        </div>
-                    </div>
-                    <div class="p-2">
-                        <button id="logout-button" class="w-full text-left flex items-center space-x-3 px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-md">
-                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H3"></path></svg>
-                             <span>Sign out</span>
-                        </button>
-                    </div>
-                </div>
+                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                 </button>
+                 <button id="add-video-button" class="hidden md:block p-2 rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2-2v8a2 2 0 002 2z"></path></svg>
+                 </button>
+                 <div id="user-actions">
+                     <button id="signin-button" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full flex items-center space-x-2">
+                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+                         <span class="hidden sm:inline">Sign In</span>
+                     </button>
+                     <div id="user-menu" class="hidden items-center space-x-2">
+                         <img id="user-avatar" class="w-8 h-8 rounded-full cursor-pointer" src="https://placehold.co/32x32/e0e0e0/000000?text=U" alt="User Avatar">
+                     </div>
+                 </div>
+                 <div id="profile-dropdown" class="hidden absolute top-full right-0 mt-2 w-64 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
+                     <div class="p-4 border-b border-gray-700 flex items-center space-x-3">
+                         <img id="profile-dropdown-avatar" class="w-10 h-10 rounded-full" src="https://placehold.co/40x40/e0e0e0/000000?text=U" alt="User Avatar">
+                         <div>
+                             <p id="profile-dropdown-name" class="font-semibold text-white"></p>
+                             <p id="profile-dropdown-email" class="text-sm text-gray-400"></p>
+                         </div>
+                     </div>
+                     <div class="p-2">
+                         <button id="logout-button" class="w-full text-left flex items-center space-x-3 px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-md">
+                              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H3"></path></svg>
+                              <span>Sign out</span>
+                         </button>
+                     </div>
+                 </div>
             </div>
         </header>
         
-        <!-- RESPONSIVE: Mobile Search Bar (Initially hidden) -->
         <div id="mobile-search-view" class="hidden p-2 bg-black/95 sticky top-0 z-30">
             <div class="relative flex items-center">
                 <button id="back-from-search" class="p-2 text-white mr-2">
@@ -156,9 +100,7 @@
         </div>
 
 
-        <!-- Main Content Area -->
         <div id="main-content-wrapper" class="flex flex-1 relative overflow-hidden">
-            <!-- RESPONSIVE: Sidebar updated for mobile drawer behavior -->
             <aside id="sidebar" class="bg-black flex-shrink-0 overflow-y-auto p-4 space-y-4 fixed top-0 left-0 h-full w-64 z-50 md:sticky md:top-[56px] md:h-[calc(100vh-56px)] md:z-30 md:transform-none">
                 <nav class="space-y-2 mt-14 md:mt-0">
                     <a href="#" id="home-link" class="sidebar-link flex items-center space-x-4 px-3 py-2 bg-gray-800 rounded-lg">
@@ -175,59 +117,51 @@
                     </a>
                 </nav>
                 <hr class="border-gray-700">
-                <div id="subscribed-channels-list" class="space-y-1">
-                    <!-- Subscribed channels will be inserted here -->
-                </div>
+                <div id="subscribed-channels-list" class="space-y-1"></div>
             </aside>
 
-            <!-- Page Content -->
-            <!-- RESPONSIVE: Added margin-left for desktop sidebar -->
             <div id="page-content" class="flex-1 overflow-y-auto md:ml-25">
-                <!-- Home Page / Video Grid -->
                 <main id="home-page" class="flex flex-col">
                      <div id="categories-container" class="sticky top-0 bg-black/95 backdrop-blur-sm px-4 py-2 border-t border-b border-gray-800 z-10">
-                        <div class="categories flex space-x-3 overflow-x-auto">
-                            <!-- Category chips will be inserted here -->
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <!-- RESPONSIVE: Grid columns change with screen size -->
-                        <div id="video-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-8">
-                            <!-- Video cards will be dynamically inserted here by JS -->
-                        </div>
-                    </div>
+                         <div class="categories flex space-x-3 overflow-x-auto"></div>
+                     </div>
+                     <div class="p-4">
+                         <div id="video-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-8"></div>
+                     </div>
                 </main>
 
-                <!-- Shorts Page -->
                 <main id="shorts-page" class="hidden">
-                    <div id="shorts-container" class="shorts-container flex flex-col items-center">
-                         <!-- Shorts videos will be dynamically inserted here -->
-                    </div>
+                    <div id="shorts-container" class="shorts-container flex flex-col items-center"></div>
                 </main>
 
-                <!-- Subscriptions Page -->
                  <main id="subscriptions-page" class="hidden p-4">
-                    <h2 class="text-2xl font-bold mb-4">Your Subscriptions</h2>
-                    <div id="subscriptions-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-8">
-                        <!-- Subscribed channel videos will be inserted here -->
-                    </div>
-                </main>
+                     <h2 class="text-2xl font-bold mb-4">Your Subscriptions</h2>
+                     <div id="subscriptions-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-8"></div>
+                 </main>
 
-                <!-- Video Watch Page -->
-                <div id="watch-page" class="hidden">
-                    <!-- RESPONSIVE: Watch page content will be injected here by JS -->
-                </div>
+                <div id="watch-page" class="hidden"></div>
             </div>
         </div>
     </div>
 
-    <!-- Modals -->
-    <!-- RESPONSIVE: Sidebar overlay for mobile -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
     
     <div id="modal-backdrop" class="fixed inset-0 bg-black bg-opacity-75 z-[60] hidden"></div>
 
-    <!-- Sign In Modal -->
+    <div id="role-choice-modal" class="fixed inset-0 z-[80] flex items-center justify-center p-4 hidden">
+        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-sm relative text-center">
+            <h2 class="text-2xl font-bold text-white mb-6">Choose Your Role</h2>
+            <div class="flex flex-col space-y-4">
+                <button id="viewer-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg text-lg">
+                    Continue as a Viewer
+                </button>
+                <button id="creator-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg text-lg">
+                    Continue as a Creator
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="signin-modal" class="fixed inset-0 z-[70] flex items-center justify-center hidden p-4">
         <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md relative">
             <button id="close-signin-modal" class="absolute top-4 right-4 text-gray-500 hover:text-white text-2xl">&times;</button>
@@ -250,41 +184,39 @@
         </div>
     </div>
 
-    <!-- Sign Up Modal -->
     <div id="signup-modal" class="fixed inset-0 z-[70] flex items-center justify-center hidden p-4">
          <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md relative">
-            <button id="close-signup-modal" class="absolute top-4 right-4 text-gray-500 hover:text-white text-2xl">&times;</button>
-            <h2 class="text-2xl font-bold text-white mb-6 text-center">Create Account</h2>
-            <div id="signup-error" class="text-red-500 text-sm text-center mb-4 hidden"></div>
-            <form id="signup-form">
-                <div class="mb-4">
-                    <label for="signup-name" class="block text-gray-400 mb-2">Name</label>
-                    <input type="text" id="signup-name" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600" required>
-                </div>
-                <div class="mb-4">
-                    <label for="signup-email" class="block text-gray-400 mb-2">Email</label>
-                    <input type="email" id="signup-email" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600" required>
-                </div>
-                <div class="mb-4 relative">
-                    <label for="signup-password" class="block text-gray-400 mb-2">Password</label>
-                    <input type="password" id="signup-password" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600" required>
-                </div>
-                 <div class="mb-6 relative">
-                    <label for="signup-confirm-password" class="block text-gray-400 mb-2">Confirm Password</label>
-                    <input type="password" id="signup-confirm-password" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600" required>
+             <button id="close-signup-modal" class="absolute top-4 right-4 text-gray-500 hover:text-white text-2xl">&times;</button>
+             <h2 class="text-2xl font-bold text-white mb-6 text-center">Create Account</h2>
+             <div id="signup-error" class="text-red-500 text-sm text-center mb-4 hidden"></div>
+             <form id="signup-form">
+                 <div class="mb-4">
+                     <label for="signup-name" class="block text-gray-400 mb-2">Name</label>
+                     <input type="text" id="signup-name" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600" required>
+                 </div>
+                 <div class="mb-4">
+                     <label for="signup-email" class="block text-gray-400 mb-2">Email</label>
+                     <input type="email" id="signup-email" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600" required>
+                 </div>
+                 <div class="mb-4 relative">
+                     <label for="signup-password" class="block text-gray-400 mb-2">Password</label>
+                     <input type="password" id="signup-password" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600" required>
+                 </div>
+                  <div class="mb-6 relative">
+                     <label for="signup-confirm-password" class="block text-gray-400 mb-2">Confirm Password</label>
+                     <input type="password" id="signup-confirm-password" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600" required>
                       <span class="absolute inset-y-0 right-0 pr-3 pt-7 flex items-center cursor-pointer password-toggle">
-                         <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                    </span>
-                </div>
-                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">Sign Up</button>
-            </form>
-            <p class="text-center text-gray-400 mt-6">
-                Already have an account? <a href="#" id="show-signin" class="text-red-500 hover:underline">Sign In</a>
-            </p>
-        </div>
+                           <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                      </span>
+                 </div>
+                 <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">Sign Up</button>
+             </form>
+             <p class="text-center text-gray-400 mt-6">
+                 Already have an account? <a href="#" id="show-signin" class="text-red-500 hover:underline">Sign In</a>
+             </p>
+         </div>
     </div>
 
-    <!-- Add Video Modal -->
     <div id="add-video-modal" class="fixed inset-0 z-[70] flex items-center justify-center hidden p-4">
         <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-lg">
             <h2 class="text-2xl font-bold text-white mb-6">Add a New Video</h2>
@@ -314,7 +246,7 @@
     // --- FIREBASE IMPORTS ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     
     // NOTE: In a real app, this should be fetched from a secure endpoint.
     // For this deployment, you will add your Firebase config to the Azure Portal Configuration.
@@ -330,8 +262,6 @@
     const CLOUDINARY_CLOUD_NAME = 'dx3ovohb4';
     const CLOUDINARY_UPLOAD_PRESET = 'youtubeClone';
     
-    // *** FIX: Define the base URL for your API calls. ***
-    // *** ACTION: Replace the placeholder with your actual Azure Static Web App URL. ***
     const API_BASE_URL = 'https://orange-sea-0bdd47003.2.azurestaticapps.net'; 
 
     async function main() {
@@ -362,7 +292,6 @@
         const modalBackdrop = document.getElementById('modal-backdrop');
         const signinForm = document.getElementById('signin-form');
         const signupForm = document.getElementById('signup-form');
-        const userActions = document.getElementById('user-actions');
         const userMenu = document.getElementById('user-menu');
         const userAvatar = document.getElementById('user-avatar');
         const watchPage = document.getElementById('watch-page');
@@ -393,14 +322,17 @@
         const categoriesContainer = document.getElementById('categories-container');
         const uploadError = document.getElementById('upload-error');
         const submitVideoButton = document.getElementById('submit-video-button');
-        
-        // RESPONSIVE: New selectors for mobile search
         const mobileSearchButton = document.getElementById('mobile-search-button');
         const mobileSearchView = document.getElementById('mobile-search-view');
         const mobileSearchInput = document.getElementById('mobile-search-input');
         const backFromSearch = document.getElementById('back-from-search');
         const mainHeader = document.querySelector('header');
         const mainContentWrapper = document.getElementById('main-content-wrapper');
+        // NEW ROLE SELECTORS
+        const roleChoiceModal = document.getElementById('role-choice-modal');
+        const viewerButton = document.getElementById('viewer-button');
+        const creatorButton = document.getElementById('creator-button');
+
 
         // --- HELPER FUNCTIONS ---
         const formatViews = (views) => {
@@ -494,6 +426,20 @@
                         </div>
                     </div>
                 `;
+                
+                // NEW: Add delete button for creators' own videos
+                if (video.type === 'local' && currentUser && currentUser.role === 'creator' && video.creatorId === currentUser.uid) {
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'delete-video-button absolute top-2 right-2 bg-red-600 text-white p-1.5 rounded-full hover:bg-red-700 z-10';
+                    deleteButton.dataset.videoId = video.id;
+                    deleteButton.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`;
+                    
+                    const containerElement = videoCard.querySelector('.relative');
+                    if(containerElement) {
+                        containerElement.appendChild(deleteButton);
+                    }
+                }
+                
                 container.appendChild(videoCard);
             });
         };
@@ -558,7 +504,6 @@
                 playerHtml = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${video.id}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
             }
 
-            // RESPONSIVE: Watch page layout updated to stack on mobile
             watchPage.innerHTML = `
                 <div class="p-4 lg:p-6">
                     <div class="flex flex-col lg:flex-row gap-6">
@@ -568,21 +513,21 @@
                             </div>
                             <h1 class="text-xl md:text-2xl font-bold mt-4">${video.title}</h1>
                             <div class="flex flex-col md:flex-row md:items-center md:justify-between mt-2 text-gray-400">
-                                <span>${video.views} views &bull; ${formatUploadDate(video.uploaded)}</span>
-                                <div class="flex space-x-4 mt-2 md:mt-0">
-                                    <button class="flex items-center space-x-2"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg><span>Like</span></button>
-                                    <button class="flex items-center space-x-2"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41-.17-.79-.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg><span>Dislike</span></button>
-                                    <button id="next-video-button" class="flex items-center space-x-2"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v16H4z" fill="none"/><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg><span>Next</span></button>
-                                </div>
+                                 <span>${video.views} views &bull; ${formatUploadDate(video.uploaded)}</span>
+                                 <div class="flex space-x-4 mt-2 md:mt-0">
+                                     <button class="flex items-center space-x-2"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg><span>Like</span></button>
+                                     <button class="flex items-center space-x-2"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41-.17-.79-.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg><span>Dislike</span></button>
+                                     <button id="next-video-button" class="flex items-center space-x-2"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v16H4z" fill="none"/><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg><span>Next</span></button>
+                                 </div>
                             </div>
                             <hr class="my-4 border-gray-700">
                             <div class="flex items-center space-x-4">
-                                <img src="${video.channelAvatar}" class="w-12 h-12 rounded-full" onerror="this.onerror=null;this.src='https://placehold.co/48x48/e0e0e0/000000?text=C';">
-                                <div>
-                                    <p class="font-bold">${video.channel}</p>
-                                    <p class="text-sm text-gray-400">Subscribers not available</p>
-                                </div>
-                                <button id="subscribe-button" data-channel-id="${video.channelId || video.channel}" class="ml-auto bg-white text-black font-bold py-2 px-4 rounded-full">Subscribe</button>
+                                 <img src="${video.channelAvatar}" class="w-12 h-12 rounded-full" onerror="this.onerror=null;this.src='https://placehold.co/48x48/e0e0e0/000000?text=C';">
+                                 <div>
+                                     <p class="font-bold">${video.channel}</p>
+                                     <p class="text-sm text-gray-400">Subscribers not available</p>
+                                 </div>
+                                 <button id="subscribe-button" data-channel-id="${video.channelId || video.channel}" class="ml-auto bg-white text-black font-bold py-2 px-4 rounded-full">Subscribe</button>
                             </div>
                         </div>
                         <div class="w-full lg:w-96 lg:max-w-md flex-shrink-0">
@@ -619,10 +564,10 @@
 
             const subscribeButton = document.getElementById('subscribe-button');
              if (currentUser && currentUser.subscriptions.includes(subscribeButton.dataset.channelId)) {
-                subscribeButton.textContent = 'Subscribed';
-                subscribeButton.classList.replace('bg-white', 'bg-gray-600');
-                subscribeButton.classList.replace('text-black', 'text-white');
-            }
+                 subscribeButton.textContent = 'Subscribed';
+                 subscribeButton.classList.replace('bg-white', 'bg-gray-600');
+                 subscribeButton.classList.replace('text-black', 'text-white');
+             }
             subscribeButton.addEventListener('click', toggleSubscription);
         };
 
@@ -633,7 +578,12 @@
                 userMenu.classList.add('flex');
                 userAvatar.src = user.avatar;
                 userAvatar.onerror = () => { userAvatar.src = 'https://placehold.co/32x32/e0e0e0/000000?text=U'; };
-                addVideoButton.classList.remove('hidden');
+                
+                if (user.role === 'creator') {
+                    addVideoButton.classList.remove('hidden');
+                } else {
+                    addVideoButton.classList.add('hidden');
+                }
             } else {
                 signinButton.classList.remove('hidden');
                 userMenu.classList.add('hidden');
@@ -901,6 +851,29 @@
             renderSubscribedChannelsList();
         };
 
+        const deleteVideo = async (videoId) => {
+            if (!currentUser || currentUser.role !== 'creator') {
+                alert("You don't have permission to delete this video.");
+                return;
+            }
+            try {
+                await deleteDoc(doc(db, "videos", videoId));
+                await fetchAllVideos();
+            } catch (error) {
+                console.error("Error deleting video:", error);
+                alert("Failed to delete the video. Please try again.");
+            }
+        };
+
+        const handleRoleSelection = (role) => {
+            sessionStorage.setItem('userRole', role);
+            closeModal(roleChoiceModal);
+            
+            if (role === 'creator' && !currentUser) {
+                openModal(signinModal);
+            }
+        };
+
         // --- EVENT HANDLERS ---
         signinButton.addEventListener('click', () => openModal(signinModal));
         closeSigninModal.addEventListener('click', () => closeModal(signinModal));
@@ -948,10 +921,11 @@
                 const user = userCredential.user;
                 const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
                 
-                const newUser = { name, email, avatar, subscriptions: [] };
+                const role = sessionStorage.getItem('userRole') || 'viewer';
+                const newUser = { name, email, avatar, subscriptions: [], role: role };
                 await setDoc(doc(db, "users", user.uid), newUser);
                 
-                currentUser = newUser;
+                currentUser = { uid: user.uid, ...newUser };
                 updateUIForAuthState(currentUser);
                 closeModal(signupModal);
 
@@ -964,15 +938,29 @@
 
         logoutButton.addEventListener('click', () => {
             signOut(auth);
+            sessionStorage.removeItem('userRole');
+            window.location.reload();
         });
 
         document.body.addEventListener('click', (e) => {
             const videoCard = e.target.closest('.video-card');
+            const deleteButton = e.target.closest('.delete-video-button');
+
+            if (deleteButton) {
+                e.stopPropagation();
+                const videoId = deleteButton.dataset.videoId;
+                if (confirm("Are you sure you want to permanently delete this video?")) {
+                    deleteVideo(videoId);
+                }
+                return;
+            }
+
             if (videoCard) {
                 const videoId = videoCard.dataset.videoId;
                 const video = allFetchedVideos.find(v => v.id == videoId);
                 if (video) renderWatchPage(video);
             }
+
             if (!searchSuggestions.contains(e.target) && e.target !== searchInput) {
                 searchSuggestions.classList.add('hidden');
             }
@@ -1040,7 +1028,11 @@
         cancelAddVideo.addEventListener('click', () => closeModal(addVideoModal));
         addVideoForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!currentUser) { openModal(signinModal); return; }
+            if (!currentUser || currentUser.role !== 'creator') {
+                alert("You must be signed in as a Creator to upload videos.");
+                openModal(signinModal);
+                return;
+            }
 
             const videoFile = e.target.elements['video-file'].files[0];
             const thumbnailFile = e.target.elements['thumbnail-file'].files[0];
@@ -1066,11 +1058,12 @@
                     channel: currentUser.name,
                     channelAvatar: currentUser.avatar,
                     views: '0',
-                    uploaded: new Date().toISOString()
+                    uploaded: new Date().toISOString(),
+                    creatorId: currentUser.uid
                 });
 
                 closeModal(addVideoModal);
-                fetchAllVideos();
+                await fetchAllVideos();
                 addVideoForm.reset();
             } catch (error) {
                 console.error("Error uploading video:", error);
@@ -1082,7 +1075,7 @@
             }
         });
         
-        // RESPONSIVE: Sidebar toggle logic
+        // --- RESPONSIVE HANDLERS ---
         menuButton.addEventListener('click', (e) => {
             e.stopPropagation();
             sidebar.classList.toggle('is-open');
@@ -1094,7 +1087,6 @@
             sidebarOverlay.classList.add('hidden');
         });
 
-        // RESPONSIVE: Mobile search view logic
         mobileSearchButton.addEventListener('click', () => {
             mainHeader.classList.add('hidden');
             mainContentWrapper.classList.add('hidden');
@@ -1111,7 +1103,7 @@
         mobileSearchInput.addEventListener('keyup', (e) => {
             if (e.key === 'Enter') {
                 search(mobileSearchInput.value);
-                backFromSearch.click(); // Close search view after searching
+                backFromSearch.click();
             }
         });
 
@@ -1144,6 +1136,7 @@
                 const userSnap = await getDoc(userRef);
                 if (userSnap.exists()) {
                     currentUser = { uid: user.uid, ...userSnap.data() };
+                    sessionStorage.setItem('userRole', currentUser.role);
                 }
                 updateUIForAuthState(currentUser);
             } else {
@@ -1151,9 +1144,23 @@
                 updateUIForAuthState(null);
             }
         });
-
+        
         // --- INITIALIZATION ---
-        await fetchAllVideos();
+        viewerButton.addEventListener('click', () => {
+            handleRoleSelection('viewer');
+            fetchAllVideos();
+        });
+        creatorButton.addEventListener('click', () => {
+            handleRoleSelection('creator');
+            fetchAllVideos();
+        });
+        
+        const storedRole = sessionStorage.getItem('userRole');
+        if (!storedRole) {
+            openModal(roleChoiceModal);
+        } else {
+            fetchAllVideos(); // Corrected function name
+        }
     }
 
     main();
